@@ -78,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
     private void handleDeleteCity(View v) {
         if (selectedPosition != -1) {
             datalist.remove(selectedPosition);
+            // added to prevent the new city in the same position remaining dark
+            cityList.setItemChecked(selectedPosition, false);
             cityAdapter.notifyDataSetChanged();
             selectedPosition = -1;
         }
