@@ -1,5 +1,6 @@
 package com.example.listycity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -7,6 +8,8 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -24,6 +27,18 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> datalist;
 
     int selectedPosition = -1;
+
+    // This part was kinda confusing to learn lol
+    private final ActivityResultLauncher<Intent> addCityLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    String newCity = result.getData().getStringExtra("CITY_NAME");
+                    datalist.add(newCity);
+                    cityAdapter.notifyDataSetChanged();
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
     // (not sure if its the same name in Java) logic, but I wanted to try separate methods.
 
     private void handleAddCity(View v) {
-        datalist.add("New City");
-        cityAdapter.notifyDataSetChanged();
+        Intent intent = new Intent(MainActivity.this, AddCityActivity.class);
+        addCityLauncher.launch(intent);
     }
     private void handleDeleteCity(View v) {
         if (selectedPosition != -1) {
