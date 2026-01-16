@@ -1,7 +1,9 @@
 package com.example.listycity;
 
 import android.os.Bundle;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
@@ -14,10 +16,14 @@ import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import android.view.View;
+
 public class MainActivity extends AppCompatActivity {
     ListView cityList;
     ArrayAdapter<String> cityAdapter;
     ArrayList<String> datalist;
+
+    int selectedPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +45,30 @@ public class MainActivity extends AppCompatActivity {
 
         cityAdapter = new ArrayAdapter<>(this, R.layout.content, datalist);
         cityList.setAdapter(cityAdapter);
+
+        Button addButton = findViewById(R.id.AddButton);
+        Button deleteButton = findViewById(R.id.DeleteButton);
+
+        addButton.setOnClickListener(this::handleAddCity);
+        deleteButton.setOnClickListener(this::handleDeleteCity);
+        cityList.setOnItemClickListener(this::handlePosSelect);
+    }
+    // Helper functions for the button logic. I know I could have done it via "lambda"
+    // (not sure if its the same name in Java) logic, but I wanted to try separate methods.
+
+    private void handleAddCity(View v) {
+        datalist.add("New City");
+        cityAdapter.notifyDataSetChanged();
+    }
+    private void handleDeleteCity(View v) {
+        if (selectedPosition != -1) {
+            datalist.remove(selectedPosition);
+            cityAdapter.notifyDataSetChanged();
+            selectedPosition = -1;
+        }
+    }
+    private void handlePosSelect(AdapterView<?> parent, View view, int position, long id) {
+        selectedPosition = position;
     }
 
 }
